@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "supply-chain-risk-management"
+version = "1.0.0"
+authors = [
+  { name="SCRM Team", email="team@example.com" },
+]
+description = "RL environment simulating enterprise supply chain operations."
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pydantic>=2.0",
+    "openenv-core>=0.2.1",
+    "fastapi",
+    "uvicorn",
+    "websockets",
+    "huggingface-hub",
+]
+
+[project.scripts]
+server = "server.app:main"
+
+[project.urls]
+"Homepage" = "https://huggingface.co/spaces"
+"Bug Tracker" = "https://huggingface.co/spaces"

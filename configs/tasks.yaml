@@ -1,0 +1,61 @@
+# Task configurations for the SCRM environment.
+# Consumed by tasks/scenarios.py at runtime; this file serves as
+# a human-readable reference.
+
+tasks:
+  easy:
+    id: easy
+    name: Routine Operations
+    difficulty: easy
+    duration_steps: 20
+    seed: 42
+    objective: Maintain supplier operations during minor disruptions
+    success_criteria:
+      min_delivery_rate: 0.90
+      max_failures: 3
+    grader_weights:
+      delivery_rate: 0.40
+      cost_variance: 0.20
+      risk_mitigation: 0.20
+      supplier_health: 0.15
+      sla_compliance: 0.05
+
+  medium:
+    id: medium
+    name: Multi-Region Crisis
+    difficulty: medium
+    duration_steps: 35
+    seed: 42
+    objective: Handle concurrent supplier disruptions across regions
+    success_criteria:
+      min_delivery_rate: 0.80
+      max_cost_impact: 0.15
+      required_actions:
+        - diversify
+        - mitigate
+        - recover
+    grader_weights:
+      delivery_rate: 0.30
+      cost_variance: 0.30
+      risk_mitigation: 0.25
+      supplier_health: 0.10
+      sla_compliance: 0.05
+
+  hard:
+    id: hard
+    name: Global Cascade Failure
+    difficulty: hard
+    duration_steps: 50
+    seed: 42
+    objective: Manage global supply chain crisis with cascading impacts
+    success_criteria:
+      min_delivery_rate: 0.70
+      max_cost_impact: 0.25
+      recovery_required: true
+      escalations_required: 2
+    grader_weights:
+      delivery_rate: 0.25
+      cost_variance: 0.25
+      risk_mitigation: 0.25
+      supplier_health: 0.15
+      sla_compliance: 0.10

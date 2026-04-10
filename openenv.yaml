@@ -1,0 +1,59 @@
+# OpenEnv Environment Configuration
+# Supply Chain Risk Management (SCRM)
+
+name: supply-chain-risk-management
+version: "1.0.0"
+description: >
+  RL environment simulating enterprise supply chain operations.
+  An agent must monitor supply chain events, assess risks, diversify suppliers,
+  negotiate alternatives, and maintain operational continuity during disruptions.
+author: SCRM Team
+license: MIT
+
+domain: enterprise-supply-chain
+framework: openenv
+
+tasks:
+  - id: easy
+    name: Routine Operations
+    description: Handle routine supplier performance issues and minor disruptions
+    difficulty: easy
+    max_steps: 20
+    expected_score_range: [0.70, 0.85]
+
+  - id: medium
+    name: Multi-Region Crisis
+    description: Manage simultaneous disruptions across 2+ geographic regions
+    difficulty: medium
+    max_steps: 35
+    expected_score_range: [0.50, 0.70]
+
+  - id: hard
+    name: Global Cascade Failure
+    description: Recover from a pandemic-scale global cascade supply chain failure
+    difficulty: hard
+    max_steps: 50
+    expected_score_range: [0.30, 0.50]
+
+models:
+  observation: models.SCRMObservation
+  action: models.SCRMAction
+  reward: models.RewardBreakdown
+
+environment:
+  class: server.environment.SupplyChainEnvironment
+  api:
+    - reset
+    - step
+    - state
+    - grade
+
+dependencies:
+  python: ">=3.10"
+  packages:
+    - pydantic>=2.0
+
+deployment:
+  dockerfile: Dockerfile
+  port: 7860
+  platform: huggingface-spaces

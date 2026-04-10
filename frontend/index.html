@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCRM | Supply Chain Risk Management</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg: #030712;
+            --surface: rgba(17, 24, 39, 0.5);
+            --surface-elevated: rgba(31, 41, 55, 0.6);
+            --border: rgba(255, 255, 255, 0.06);
+            --border-highlight: rgba(255, 255, 255, 0.12);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius: 16px;
+            --transition: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes flashGreen {
+            0% {
+                color: var(--success);
+                text-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+            }
+
+            100% {
+                color: #fff;
+                text-shadow: none;
+            }
+        }
+
+        @keyframes flashRed {
+            0% {
+                color: var(--danger);
+                text-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+            }
+
+            100% {
+                color: #fff;
+                text-shadow: none;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.5;
+            background-image: radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 40%), radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.04) 0px, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            animation: fadeInUp 0.6s var(--transition);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .status-badge {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            padding: 0.4rem 0.9rem;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .status-badge.offline {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .status-dot-live {
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .action-bar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            display: flex;
+            gap: 0.65rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.03);
+            color: #fff;
+            border: 1px solid var(--border);
+            padding: 0.6rem 1.1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-family: var(--font-main);
+            white-space: nowrap;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--border-highlight);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        button.primary {
+            background: var(--accent);
+            border: none;
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        button.primary:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 6px 20px var(--accent-glow);
+        }
+
+        button.autopilot-active {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: var(--success);
+        }
+
+        .separator {
+            width: 1px;
+            height: 24px;
+            background: var(--border);
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .speed-control select {
+            background: rgba(0, 0, 0, 0.4);
+            color: #fff;
+            border: 1px solid var(--border);
+            padding: 0.45rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-family: var(--font-main);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-card {
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            transition: all 0.3s var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .glass-card:hover {
+            background: var(--surface-elevated);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+            border-color: var(--border-highlight);
+        }
+
+        .col-span-12 {
+            grid-column: span 12;
+        }
+
+        .col-span-8 {
+            grid-column: span 8;
+        }
+
+        .col-span-4 {
+            grid-column: span 4;
+        }
+
+        .col-span-3 {
+            grid-column: span 3;
+        }
+
+        .card-label {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #fff;
+            transition: color 0.3s;
+        }
+
+        .metric-value.flash-up {
+            animation: flashGreen 0.8s ease-out;
+        }
+
+        .metric-value.flash-down {
+            animation: flashRed 0.8s ease-out;
+        }
+
+        .metric-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.4rem;
+            font-weight: 500;
+        }
+
+        .progress-bar-container {
+            margin-top: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            height: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            border-radius: 4px;
+            transition: width 0.5s var(--transition);
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .data-table th {
+            padding: 0.4rem 0.8rem;
+            text-align: left;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.6rem;
+        }
+
+        .data-table tr td {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.7rem 0.8rem;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            transition: background 0.3s;
+        }
+
+        .data-table tr:hover td {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .data-table tr td:first-child {
+            border-left: 1px solid var(--border);
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+
+        .data-table tr td:last-child {
+            border-right: 1px solid var(--border);
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .health-bar {
+            width: 55px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 0.4rem;
+        }
+
+        .health-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s var(--transition), background 0.3s;
+        }
+
+        .terminal {
+            background: #020617;
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: #10b981;
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid rgba(16, 185, 129, 0.08);
+            line-height: 1.7;
+            scroll-behavior: smooth;
+        }
+
+        .terminal .ts {
+            color: var(--text-muted);
+            margin-right: 0.5rem;
+        }
+
+        .terminal .info {
+            color: #3b82f6;
+        }
+
+        .terminal .warn {
+            color: #f59e0b;
+        }
+
+        .terminal .err {
+            color: #ef4444;
+        }
+
+        .terminal .ok {
+            color: #10b981;
+        }
+
+        .episode-banner {
+            display: none;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(16, 185, 129, 0.12));
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .episode-banner.show {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .episode-banner .score {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .episode-banner .label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 700;
+        }
+
+        @media(max-width: 1024px) {
+            .bento-grid>div {
+                grid-column: span 12 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div style="display:flex; align-items:center; gap:1rem;">
+                <i data-lucide="factory" style="width:28px; height:28px; color:var(--accent);"></i>
+                <h1>SCRM Engine <span style="font-weight:400; color:var(--text-muted); margin-left:0.3rem;">/
+                        OpenEnv</span></h1>
+            </div>
+            <div class="status-badge offline" id="conn-status">
+                <span class="status-dot-live" id="conn-dot"></span>
+                <span id="conn-text">Connecting...</span>
+            </div>
+        </header>
+
+        <div class="episode-banner" id="episode-banner">
+            <i data-lucide="trophy" style="width:32px; height:32px; color:var(--accent);"></i>
+            <div>
+                <div class="label">Episode Complete — Final Score</div>
+                <div class="score" id="final-score">0.0000</div>
+            </div>
+            <button class="primary" onclick="wsReset()" style="margin-left:auto;"><i data-lucide="refresh-cw"
+                    style="width:14px; height:14px;"></i> New Episode</button>
+        </div>
+
+        <div class="action-bar">
+            <button class="primary" id="btn-reset" onclick="wsReset()"><i data-lucide="refresh-cw"
+                    style="width:13px; height:13px;"></i> Reset</button>
+            <div class="separator"></div>
+            <button onclick="wsStep('monitor')"><i data-lucide="eye" style="width:13px; height:13px;"></i>
+                Monitor</button>
+            <button onclick="wsStep('diversify')"><i data-lucide="git-branch" style="width:13px; height:13px;"></i>
+                Diversify</button>
+            <button onclick="wsStep('mitigate')"><i data-lucide="shield" style="width:13px; height:13px;"></i>
+                Mitigate</button>
+            <button onclick="wsStep('recover')"><i data-lucide="heart-pulse" style="width:13px; height:13px;"></i>
+                Recover</button>
+            <button onclick="wsStep('update_sop')"><i data-lucide="file-text" style="width:13px; height:13px;"></i>
+                SOP</button>
+            <div class="separator"></div>
+            <button id="btn-autopilot" onclick="toggleAutopilot()"><i data-lucide="bot"
+                    style="width:13px; height:13px;"></i> <span id="autopilot-label">▶ Auto-Pilot</span></button>
+            <div class="speed-control">
+                <span style="font-size:0.6rem; color:var(--text-muted); font-weight:600;">SPEED</span>
+                <select id="speed-select">
+                    <option value="2000">Slow</option>
+                    <option value="1000" selected>Normal</option>
+                    <option value="400">Fast</option>
+                    <option value="150">Turbo</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="bento-grid">
+            <div class="glass-card col-span-3">
+                <div class="card-label"><i data-lucide="clock" style="width:11px; height:11px;"></i> Time Step</div>
+                <div class="metric-value" id="val-timestamp">—</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="step-progress" style="width:0%"></div>
+                </div>
+                <div class="metric-sub">Episode Progress</div>
+            </div>
+            <div class="glass-card col-span-3">
+                <div class="card-label"><i data-lucide="truck" style="width:11px; height:11px;"></i> On-Time Delivery
+                </div>
+                <div class="metric-value" id="val-otd">—</div>
+                <div class="metric-sub">SLA Target: >95%</div>
+            </div>
+            <div class="glass-card col-span-3">
+                <div class="card-label"><i data-lucide="award" style="width:11px; height:11px;"></i> Reward</div>
+                <div class="metric-value" id="val-reward">—</div>
+                <div class="metric-sub">Cumulative Trajectory</div>
+            </div>
+            <div class="glass-card col-span-3">
+                <div class="card-label"><i data-lucide="indian-rupee" style="width:11px; height:11px;"></i> Total Cost
+                </div>
+                <div class="metric-value" id="val-cost">—</div>
+                <div class="metric-sub">Operational Friction</div>
+            </div>
+
+            <div class="glass-card col-span-8">
+                <div class="card-label"><i data-lucide="network" style="width:11px; height:11px;"></i> Supplier Topology
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Supplier</th>
+                                <th>Region</th>
+                                <th>Health</th>
+                                <th>Reliability</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="supplier-body">
+                            <tr>
+                                <td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem;">Click
+                                    <b>Reset</b> or <b>Auto-Pilot</b> to begin
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="glass-card col-span-4">
+                <div class="card-label"><i data-lucide="zap" style="width:11px; height:11px;"></i> Disruption Intel
+                </div>
+                <div id="risk-events-container">
+                    <div style="text-align:center; padding:1.5rem 0;">
+                        <i data-lucide="shield-check"
+                            style="width:40px; height:40px; color:var(--success); opacity:0.15;"></i>
+                        <p style="color:var(--text-muted); font-size:0.7rem; margin-top:0.75rem;">No active threats</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card col-span-12">
+                <div class="card-label"><i data-lucide="terminal" style="width:11px; height:11px;"></i> Agent Logic
+                    Stream</div>
+                <div class="terminal" id="terminal-log"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // ── State ──
+        const MAX_STEPS = 35;
+        let ws = null;
+        let cumulativeReward = 0;
+        let autopilotTimer = null;
+        let busy = false;
+        let episodeDone = false;
+        let lastObs = null;
+        let prevOTD = null, prevReward = null;
+
+        // ── Logger ──
+        function log(msg, type = 'info') {
+            const term = document.getElementById('terminal-log');
+            const ts = new Date().toLocaleTimeString('en-US', { hour12: false });
+            const cls = { error: 'err', warn: 'warn', success: 'ok' }[type] || 'info';
+            term.innerHTML += `<div><span class="ts">${ts}</span><span class="${cls}">[${type.toUpperCase()}]</span> ${msg}</div>`;
+            term.scrollTop = term.scrollHeight;
+        }
+
+        function flashMetric(el, dir) {
+            el.classList.remove('flash-up', 'flash-down');
+            void el.offsetWidth;
+            el.classList.add(dir === 'up' ? 'flash-up' : 'flash-down');
+        }
+
+        // ── WebSocket Connection ──
+        function connectWS() {
+            const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const url = `${proto}//${location.host}/ws`;
+            log(`Connecting WebSocket → ${url}`, 'info');
+
+            ws = new WebSocket(url);
+
+            ws.onopen = () => {
+                log('WebSocket connected — persistent session active', 'success');
+                setConnected(true);
+                wsReset();
+            };
+
+            ws.onmessage = (evt) => {
+                try {
+                    const msg = JSON.parse(evt.data);
+                    handleWSMessage(msg);
+                } catch (e) {
+                    log(`Parse error: ${e.message}`, 'error');
+                }
+                busy = false;
+            };
+
+            ws.onerror = () => {
+                log('WebSocket error', 'error');
+                setConnected(false);
+            };
+
+            ws.onclose = () => {
+                log('WebSocket closed — will reconnect in 3s', 'warn');
+                setConnected(false);
+                setTimeout(connectWS, 3000);
+            };
+        }
+
+        function setConnected(ok) {
+            const badge = document.getElementById('conn-status');
+            const dot = document.getElementById('conn-dot');
+            const text = document.getElementById('conn-text');
+            if (ok) {
+                badge.classList.remove('offline');
+                text.textContent = 'Live Session';
+            } else {
+                badge.classList.add('offline');
+                text.textContent = 'Reconnecting...';
+            }
+        }
+
+        // ── WebSocket Message Handlers ──
+        function handleWSMessage(msg) {
+            if (msg.type === 'observation') {
+                // OpenEnv serializes as: { observation: {...fields}, reward, done }
+                const envelope = msg.data;
+                const obs = envelope.observation || envelope;
+                const reward = envelope.reward;
+                const done = envelope.done;
+
+                if (reward !== null && reward !== undefined) {
+                    cumulativeReward += reward;
+                    const step = obs.timestamp || '?';
+                    log(`Step <b>${step}</b> → reward: <b>${reward.toFixed(4)}</b> | cumulative: <b>${cumulativeReward.toFixed(4)}</b>`, 'success');
+                } else {
+                    log('Environment initialized — observation received', 'success');
+                }
+
+                if (done) {
+                    episodeDone = true;
+                    stopAutopilot();
+                    log('━━━ EPISODE TERMINATED ━━━ Final Cumulative Reward: ' + cumulativeReward.toFixed(4), 'warn');
+                    showEpisodeBanner(cumulativeReward);
+                }
+
+                updateUI(obs);
+                lastObs = obs;
+            } else if (msg.type === 'error') {
+                log(`Server error: ${msg.data?.message || JSON.stringify(msg.data)}`, 'error');
+            }
+        }
+
+        // ── WebSocket Commands ──
+        function wsReset() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+            busy = true;
+            episodeDone = false;
+            cumulativeReward = 0;
+            prevOTD = null;
+            prevReward = null;
+            document.getElementById('episode-banner').classList.remove('show');
+            log('Sending reset → task: medium', 'info');
+            ws.send(JSON.stringify({ type: 'reset', data: { task_config: { id: 'medium' } } }));
+        }
+
+        function wsStep(actionType, extra) {
+            if (!ws || ws.readyState !== WebSocket.OPEN || busy || episodeDone) return;
+            busy = true;
+
+            const action = { action_type: actionType };
+            if (extra) {
+                if (extra.supplier_id) action.supplier_id = extra.supplier_id;
+                if (extra.action_data) action.action_data = extra.action_data;
+            }
+
+            log(`Action → <b>${actionType}</b>`, 'info');
+            ws.send(JSON.stringify({ type: 'step', data: action }));
+        }
+
+        // ── Heuristic Agent ──
+        function heuristicAction(obs, step) {
+            const risks = obs.risk_events || [];
+            const active = risks.filter(r => r.status === 'active');
+            const otd = obs.delivery_performance?.on_time_delivery || 1.0;
+
+            if (active.length > 0) {
+                const evt = active[0];
+                return step % 2 === 0
+                    ? { type: 'mitigate', extra: { action_data: { event_id: evt.id } } }
+                    : { type: 'recover', extra: { action_data: { event_id: evt.id } } };
+            }
+            if (otd < 0.90) return { type: 'diversify' };
+            if (step % 4 === 0) {
+                const sups = Object.keys(obs.supplier_status || {});
+                if (sups.length) return { type: 'assess_risk', extra: { supplier_id: sups[0] } };
+            }
+            return { type: 'monitor' };
+        }
+
+        // ── Auto-Pilot ──
+        function toggleAutopilot() {
+            autopilotTimer ? stopAutopilot() : startAutopilot();
+        }
+
+        async function startAutopilot() {
+            document.getElementById('btn-autopilot').classList.add('autopilot-active');
+            document.getElementById('autopilot-label').textContent = '■ Stop Pilot';
+            log('🤖 Auto-Pilot ENGAGED', 'warn');
+
+            if (!lastObs) wsReset();
+            await sleep(500); // wait for reset
+
+            const speed = parseInt(document.getElementById('speed-select').value);
+            autopilotTimer = setInterval(autopilotStep, speed);
+        }
+
+        function stopAutopilot() {
+            if (autopilotTimer) { clearInterval(autopilotTimer); autopilotTimer = null; }
+            document.getElementById('btn-autopilot').classList.remove('autopilot-active');
+            document.getElementById('autopilot-label').textContent = '▶ Auto-Pilot';
+            log('Auto-Pilot disengaged', 'info');
+        }
+
+        function autopilotStep() {
+            if (busy || episodeDone || !lastObs) { if (episodeDone) stopAutopilot(); return; }
+            const step = lastObs.timestamp || 0;
+            const { type, extra } = heuristicAction(lastObs, step);
+            wsStep(type, extra);
+        }
+
+        document.getElementById('speed-select').addEventListener('change', () => {
+            if (autopilotTimer) {
+                clearInterval(autopilotTimer);
+                autopilotTimer = setInterval(autopilotStep, parseInt(document.getElementById('speed-select').value));
+            }
+        });
+
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        // ── Episode Banner ──
+        function showEpisodeBanner(score) {
+            document.getElementById('final-score').textContent = score.toFixed(4);
+            document.getElementById('episode-banner').classList.add('show');
+        }
+
+        // ── UI Update ──
+        function updateUI(obs) {
+            if (!obs) return;
+
+            const ts = obs.timestamp || 0;
+            document.getElementById('val-timestamp').innerText = `${ts} / ${MAX_STEPS}`;
+            document.getElementById('step-progress').style.width = `${(ts / MAX_STEPS) * 100}%`;
+
+            const otd = obs.delivery_performance?.on_time_delivery || 0;
+            const otdEl = document.getElementById('val-otd');
+            otdEl.innerText = (otd * 100).toFixed(1) + '%';
+            if (prevOTD !== null) flashMetric(otdEl, otd >= prevOTD ? 'up' : 'down');
+            prevOTD = otd;
+
+            const rewardEl = document.getElementById('val-reward');
+            rewardEl.innerText = cumulativeReward.toFixed(4);
+            if (prevReward !== null) flashMetric(rewardEl, cumulativeReward >= prevReward ? 'up' : 'down');
+            prevReward = cumulativeReward;
+
+            const cost = obs.cost_metrics?.total_cost || 0;
+            document.getElementById('val-cost').innerText = `₹${cost.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+            // Suppliers
+            const supBody = document.getElementById('supplier-body');
+            const suppliers = obs.supplier_status || {};
+            if (Object.keys(suppliers).length > 0) {
+                supBody.innerHTML = '';
+                for (const [id, d] of Object.entries(suppliers)) {
+                    const h = d.health_score || 0;
+                    let col = 'var(--success)', bar = '#10b981';
+                    if (h < 70) { col = 'var(--warning)'; bar = '#f59e0b'; }
+                    if (h < 50) { col = 'var(--danger)'; bar = '#ef4444'; }
+                    supBody.innerHTML += `<tr>
+                    <td style="font-weight:700; color:#fff; font-size:0.72rem;">${id}</td>
+                    <td style="text-transform:capitalize; color:var(--text-secondary);">${(d.region || '').replace('_', ' ')}</td>
+                    <td><span style="font-family:var(--font-mono); font-weight:600; color:${col};">${h}</span><div class="health-bar"><div class="health-bar-fill" style="width:${h}%; background:${bar};"></div></div></td>
+                    <td style="font-family:var(--font-mono); font-weight:600;">${((d.reliability || 0) * 100).toFixed(1)}%</td>
+                    <td><div style="display:flex; align-items:center; gap:0.35rem; text-transform:uppercase; font-size:0.62rem; font-weight:800; color:${col}"><div style="width:5px; height:5px; background:${col}; border-radius:50%; box-shadow:0 0 8px ${col}"></div>${d.status || '?'}</div></td>
+                </tr>`;
+                }
+            }
+
+            // Risks
+            const rc = document.getElementById('risk-events-container');
+            const risks = obs.risk_events || [];
+            if (risks.length > 0) {
+                rc.innerHTML = '';
+                risks.forEach(r => {
+                    const sev = typeof r.severity === 'number' ? (r.severity >= 0.8 ? 'CRITICAL' : r.severity >= 0.5 ? 'HIGH' : 'MEDIUM') : String(r.severity || '').toUpperCase();
+                    const c = sev === 'CRITICAL' ? 'var(--danger)' : 'var(--warning)';
+                    rc.innerHTML += `<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); padding:0.9rem; border-radius:10px; margin-bottom:0.6rem; animation:fadeInUp 0.3s ease;">
+                    <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom:0.4rem;"><i data-lucide="alert-triangle" style="width:11px; height:11px; color:${c}"></i><span style="font-size:0.58rem; font-weight:900; color:${c}; text-transform:uppercase;">${sev}</span></div>
+                    <strong style="color:#fff; display:block; font-size:0.78rem; margin-bottom:0.25rem;">${r.type || 'Unknown'}</strong>
+                    <p style="font-size:0.68rem; color:var(--text-secondary); line-height:1.5;">${r.description || ''}</p>
+                </div>`;
+                });
+                lucide.createIcons();
+            } else {
+                rc.innerHTML = `<div style="text-align:center; padding:1.5rem 0;"><i data-lucide="shield-check" style="width:40px; height:40px; color:var(--success); opacity:0.15;"></i><p style="color:var(--text-muted); font-size:0.7rem; margin-top:0.75rem;">No active threats</p></div>`;
+                lucide.createIcons();
+            }
+        }
+
+        // ── Init ──
+        window.onload = () => {
+            log('SCRM Dashboard v3.0 — WebSocket Mode', 'info');
+            connectWS();
+        };
+    </script>
+</body>
+
+</html>
